@@ -39,17 +39,6 @@ const controller = {
 
 /* UI logic */
 
-function switchActivePlayer(player1, player2) {
-    if (player1.classList.contains('active')) {
-        player1.classList.remove('active');
-        player2.classList.add('active');
-    }
-    else {
-        player2.classList.remove('active');
-        player1.classList.add('active');
-    }
-}
-
 window.onload = () => {
     const die = document.querySelector('.die');
     const winner = document.querySelector('.winner');
@@ -62,15 +51,25 @@ window.onload = () => {
         player2.innerText = controller.players[1];
     }
 
+    const switchActivePlayer = function (player1, player2) {
+        if (player1.classList.contains('active')) {
+            player1.classList.remove('active');
+            player2.classList.add('active');
+        }
+        else {
+            player2.classList.remove('active');
+            player1.classList.add('active');
+        }
+    }
+
     const isEndGame = function () {
         const winner = controller.isThereWinner();
         if (winner > -1) {
             winner.classList.remove('hidden');
             announcement.innerText = 'The winner is player ' + (winner + 1);
         }
-        else 
+        else
             switchActivePlayer();
-        displayScores();
     }
 
     // Roll button
@@ -79,22 +78,22 @@ window.onload = () => {
         die.innerText = n;
         if (n === 1) {
             updateScore();
-            switchActivePlayer();
+            displayScores();
+            isEndGame();
         }
-        displayScores();
     });
     
     // Hold button
     document.querySelector('#hold-btn').addEventListener('click', () => {
         updateScore();
-        
-        
+        displayScores();
+        isEndGame();
     });
 
     // Restart button
     document.querySelector('#restart-btn').addEventListener('click', () => {
         controller.init();
-        displayScores(player1, player2);
+        displayScores();
         announcement.innerText = '';
         winner.classList.add('hidden');
     })
