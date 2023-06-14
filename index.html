@@ -9,13 +9,20 @@
 </head>
 <body>
     <h1>Pig Dice(oink!)</h1>
-        <form>
-            <label for ='new-player-1'>Player 1 Name:</label>
-            <input type='text' id="new-player-1" name="new-player-1">
-            <label for ='new-player-2'>Player 2 Name:</label>
-            <input type='text' id="new-player-2" name="new-player-2">       
-        </form>
-
-    
+    <div class="game-display">
+        <div class="die"></div>
+        <div class="winner hidden">
+            <div class="announcement"></div>
+            <button id="restart-btn">Restart</button>
+        </div>
+        <div>
+            <button id="roll-btn">Roll</button>
+            <button id="hold-btn">Hold</button>
+        </div>
+    </div>
+    <div class="score-display">
+        <div class="score score-1 active"></div>
+        <div class="score score-2"></div>
+    </div>
 </body>
 </html>
