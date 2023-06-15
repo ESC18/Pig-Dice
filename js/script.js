@@ -1,100 +1,86 @@
-function rollDie() {
-    let randomNumber = Math.floor(Math.random() * 6 + 1);
-    return randomNumber;
-}
-
-function updateRunningTotal() {
-    let randomNumber = rollDie();
-    if (randomNumber !== 1)
-        controller.runningTotal += randomNumber;
-    else 
-        controller.runningTotal = 0;
-    return randomNumber;
-}
-
-function updateScore() {
-    controller.players[controller.activePlayer] += controller.runningTotal;
-    controller.runningTotal = 0;
-}
-
-function switchPlayer(player) {
-    if (player === 0)
-        return 1;
-    return 0;
-}
-
 const controller = {
-    init: function () {
+    activePlayer: 0,
+    players: [0, 0],
+    runningTotal: 0,
+    winner: "",
+    reset: function () {
         this.activePlayer = 0;
         this.players = [0, 0];
         this.runningTotal = 0;
-    },
-    isThereWinner: function () {
-        if (this.players[this.activePlayer] >= 100)
-            return this.activePlayer;
-        this.activePlayer = switchPlayer(this.activePlayer);
-        return -1;
+        this.winner = "";
+    }
+};
+
+function rollDie() {
+    let r = Math.floor(Math.random() * 6 + 1);
+    if (r === 1) {
+        controller.runningTotal = 0;
+        return true;
+    }
+    else {
+        controller.runningTotal += r;
+        return false;
     }
 }
 
-/* UI logic */
+function endTurn() {
+    controller.players[controller.activePlayer].score += controller.runningTotal;
+    controller.runningTotal = 0;
+    if (controller.players[controller.activePlayer].score >= 100)
+        controller.winner = controller.activePlayer;
+    else
+        controller.activePlayer = Number(!controller.activePlayer);
+}
 
-window.onload = () => {
-    const die = document.querySelector('.die');
+function displayDie(n) {
+    document.querySelector('.die').innerText = n;
+}
+
+function display() {
+    document.querySelector
+}
+
+function displayWinner() {
     const winner = document.querySelector('.winner');
-    const announcement = document.querySelector('.announcement');
-    const player1 = document.querySelector('.score-1');
-    const player2 = document.querySelector('.score-2');
-
-    const displayScores = function () {
-        player1.innerText = controller.players[0];
-        player2.innerText = controller.players[1];
+    const winnerNo = document.querySelector('.winner-name');
+    if (controller.winner) {
+        winner.classList.remove('hidden');
+        winnerNo.innerText = controller.winner;
     }
-
-    const switchActivePlayer = function (player1, player2) {
-        if (player1.classList.contains('active')) {
-            player1.classList.remove('active');
-            player2.classList.add('active');
-        }
-        else {
-            player2.classList.remove('active');
-            player1.classList.add('active');
-        }
-    }
-
-    const isEndGame = function () {
-        const winner = controller.isThereWinner();
-        if (winner > -1) {
-            winner.classList.remove('hidden');
-            announcement.innerText = 'The winner is player ' + (winner + 1);
-        }
-        else
-            switchActivePlayer();
-    }
-
-    // Roll button
-    document.querySelector('#roll-btn').addEventListener('click', () => {
-        const n = updateRunningTotal();
-        die.innerText = n;
-        if (n === 1) {
-            updateScore();
-            displayScores();
-            isEndGame();
-        }
-    });
-    
-    // Hold button
-    document.querySelector('#hold-btn').addEventListener('click', () => {
-        updateScore();
-        displayScores();
-        isEndGame();
-    });
-
-    // Restart button
-    document.querySelector('#restart-btn').addEventListener('click', () => {
-        controller.init();
-        displayScores();
-        announcement.innerText = '';
+    else
         winner.classList.add('hidden');
+}
+
+window.onload = () => {    
+    document.querySelector('')
+
+    document.querySelector('#roll-btn').addEventListener('click', () => {
+        const r = controller.rollDie();
+        displayDie();
+        if (r)
+            endTurn();
+    });
+
+    document.querySelector('#hold-btn').addEventListener('click', () => {
+        endTurn();
+    });
+
+    document.querySelector('#restart-btn').addEventListener('click', () => {
+        controller.reset();
+        displayWinner();
     })
 }
+
+/*
+Per turn:
+Roll a die
+Display die number
+- check die number
+  if die number is 1, end turn
+  if die number is 2+, add to running total
+- end turn
+  add running total to player score
+  check score
+  if score is greater than or equal to 100, player wins
+  else switch players
+*/
